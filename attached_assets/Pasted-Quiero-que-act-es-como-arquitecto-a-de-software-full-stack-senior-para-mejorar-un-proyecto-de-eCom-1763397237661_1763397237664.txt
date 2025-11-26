@@ -1,0 +1,242 @@
+Quiero que actúes como arquitecto/a de software + full-stack senior para mejorar un proyecto de eCommerce de indumentaria con fines comerciales reales.
+
+Te voy a enviar un ZIP del proyecto completo. Dentro hay:
+
+Un backend en Node.js nativo (sin Express), usando node:http, módulos ESM y base de datos MySQL.
+
+Un frontend hecho en HTML/CSS/JS (sin frameworks pesados tipo React), con un panel de administración ya empezado, login, manejo de productos, etc.
+
+Ya hay cosas implementadas: login, registro, manejo básico de productos, panel admin, etc., pero el proyecto todavía no está a nivel profesional.
+
+1. Contexto del proyecto
+
+Es una tienda online de indumentaria de todo tipo (remeras, pantalones, vestidos, etc.).
+El flujo deseado es:
+
+Un usuario entra, navega el catálogo, filtra productos, agrega al carrito.
+
+El carrito se guarda en el navegador (cache/localStorage/sessionStorage).
+
+Al “finalizar compra”, en vez de un checkout tradicional, se arma un mensaje con el detalle del carrito y se abre WhatsApp del vendedor con ese mensaje prellenado (usando el número del vendedor definido en configuración/env).
+
+El proyecto ya existe y tiene código funcionando, pero necesita:
+
+Mejor arquitectura.
+
+Mejor experiencia de administración.
+
+Mejor diseño visual (Material Design de verdad).
+
+Revisión fuerte de ciberseguridad.
+
+Tu trabajo es dejarlo limpio, modular, seguro y visualmente profesional.
+
+2. Objetivos principales
+2.1. Accesibilidad del administrador (sin romper seguridad)
+
+Quiero que:
+
+El administrador tenga un acceso claro y cómodo a su panel, por ejemplo:
+
+Ruta clara tipo /admin o similar.
+
+Login de admin bien separado del login de usuario normal.
+
+Se mantenga o mejore la seguridad de acceso:
+
+Manejo correcto de sesiones/tokens.
+
+Protección contra accesos no autenticados a las rutas admin.
+
+Verificación de rol (ADMIN vs usuarios normales).
+
+Opcional pero deseable:
+
+Algún pequeño “quality of life” para el admin: menú lateral claro, navegación simple entre productos, pedidos, configuración, etc.
+
+No quiero “atajos inseguros” (por ejemplo, bypass de login o hardcodear cosas).
+La accesibilidad del admin tiene que ser usable pero segura.
+
+2.2. Rediseño visual completo con Material Design
+
+Quiero que reestructures por completo los estilos (CSS) para que el frontend se vea:
+
+Moderno, limpio, profesional.
+
+Basado en principios de Material Design:
+
+Tipografías claras.
+
+Botones flotantes, sombras suaves, tarjetas, elevaciones, etc.
+
+Paleta de colores consistente (por ejemplo, primario/secondary y variantes).
+
+Responsivo (que se vea bien en desktop y mobile).
+
+Puedes:
+
+Reorganizar las clases CSS.
+
+Aplicar un sistema de diseño (variables CSS, escalas de tipografía, espaciados).
+
+Crear componentes visuales coherentes: cards de producto, botones, formularios, alerts, etc.
+
+Importante:
+
+Si usas algún framework de Material Design (por ejemplo, Materialize, Material Components Web o similar), explícame qué librería propones y cómo integrarla con el proyecto actual.
+
+Si lo hacés con CSS “a mano”, igualmente respetá las guías de Material Design en lo posible.
+
+2.3. Carrito vinculado a WhatsApp (localStorage / cache)
+
+Quiero que mejores y/o implementes el flujo del carrito → WhatsApp:
+
+El carrito debe guardarse en el navegador, por ejemplo:
+
+localStorage (preferente) o sessionStorage.
+
+Datos mínimos: id del producto, nombre, precio, cantidad, talla, color, subtotal, total global.
+
+Al pulsar “Finalizar compra”:
+
+Se genera un mensaje de texto con:
+
+Lista de productos (nombre + cantidad + precio).
+
+Total final.
+
+Datos opcionales como método de envío, observaciones, etc. (puedes proponer tú el formato).
+
+Se construye una URL https://wa.me/<NUMERO_VENDEDOR>?text=<MENSAJE_ENCODEADO> y se abre en una nueva pestaña/ventana.
+
+El número de WhatsApp del vendedor debe poder configurarse:
+
+Idealmente vía variable de entorno en el backend (process.env.WHATSAPP_NUMBER) y/o configuraciones claras en el frontend.
+
+Asegúrate de que:
+
+El mensaje no se corte por longitud de URL (si es muy largo, puedes proponer alternativas).
+
+El formato sea legible y prolijo para el vendedor.
+
+2.4. Ciberseguridad (XSS, CORS y otros)
+
+Necesito que hagas una revisión de seguridad orientada a un proyecto real con fines de lucro:
+
+XSS:
+
+Revisa todas las partes donde se renderiza input del usuario.
+
+Evita innerHTML inseguro en el frontend.
+
+Escapa correctamente los datos que provienen del backend.
+
+Si es necesario, propone o integra una pequeña función de sanitización.
+
+CORS:
+
+Revisa cómo está configurado ahora.
+
+Si frontend y backend están en dominios distintos, configura CORS de forma explícita:
+
+Origins permitidos.
+
+Métodos.
+
+Headers.
+
+Credenciales, si aplica.
+
+Otras medidas importantes:
+
+Almacenamiento de contraseñas con hashing fuerte (bcrypt o similar).
+
+Sanitización de inputs en el backend (para prevenir inyecciones SQL).
+
+Uso correcto de consultas preparadas/parametrizadas en MySQL.
+
+Manejo adecuado de errores (no enviar stacktraces crudos al cliente).
+
+Validaciones de datos en los endpoints (tipos, rangos, etc.).
+
+Rate limiting / protección básica contra fuerza bruta en login (al menos a nivel conceptual o simple implementación).
+
+Si detectas más problemas (CSRF, headers de seguridad HTTP, etc.), quiero que los enumeres y propongas solución concreta.
+
+3. Qué quiero que hagas con el proyecto
+
+Al recibir el ZIP, realiza lo siguiente:
+
+Análisis inicial
+
+Explica brevemente:
+
+Cómo está estructurado el backend (carpetas, módulos principales).
+
+Cómo está estructurado el frontend.
+
+Qué ya funciona (login, productos, etc.) y qué está incompleto o mal implementado.
+
+Plan de mejora
+
+Propón un plan paso a paso que incluya:
+
+Mejora de accesibilidad del admin.
+
+Refactor de estilos a Material Design.
+
+Implementación o mejora del carrito con WhatsApp y localStorage.
+
+Endurecimiento de ciberseguridad.
+
+Cambios concretos en el código
+
+Para cada paso, dame:
+
+Archivos específicos a modificar o crear (con su ruta exacta).
+
+Código completo actualizado de esos archivos (no solo fragmentos sueltos).
+
+Prioriza:
+
+Que el proyecto siga funcionando (no rompas lo que ya está OK).
+
+Mantener la arquitectura Node.js nativo + MySQL.
+
+Mejorar la legibilidad y modularidad.
+
+Explicaciones breves
+
+Después de cada bloque de cambios, explica:
+
+Qué problema resuelve.
+
+Por qué lo hiciste así (especialmente en temas de seguridad y diseño).
+
+Checklist final
+
+Al final, genera una lista de verificación:
+
+✅ Acceso admin usable y seguro.
+
+✅ Estilos migrados / organizados bajo un criterio de Material Design.
+
+✅ Carrito → WhatsApp funcionando y probado.
+
+✅ Principales riesgos de XSS/CORS mitigados.
+
+✅ Otras mejoras de seguridad relevantes.
+
+4. Estándares y nivel de calidad
+
+Este proyecto es para uso comercial real, así que:
+
+Cuidá nombres de variables, organización de carpetas y modularidad.
+
+Evitá “parches rápidos” que ensucien el código.
+
+Pensá en escalabilidad y mantenibilidad.
+
+Código y explicaciones en español (puedes usar nombres de variables en inglés si lo ves más claro).
+
+Cuando estés listo, pedime el ZIP del proyecto y empezá con el análisis inicial antes de tocar código.
