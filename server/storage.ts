@@ -1,6 +1,7 @@
 import { products, admins, configuration, type Product, type InsertProduct, type Admin, type InsertAdmin, type Configuration, type InsertConfiguration } from "@shared/schema";
 import { db } from "./db";
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
+import crypto from "node:crypto";
 
 export interface IStorage {
   // Products
@@ -33,25 +34,28 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createProduct(insertProduct: InsertProduct): Promise<Product> {
-    const [product] = await db
-      .insert(products)
-      .values(insertProduct)
-      .returning();
-    return product;
+    const productData = { id: crypto.randomUUID(), ...insertProduct };
+
+    await db.insert(products).values(productData);
+
+    return (await this.getProduct(productData.id))!;
   }
 
   async updateProduct(id: string, insertProduct: InsertProduct): Promise<Product | undefined> {
-    const [product] = await db
+    await db
       .update(products)
       .set(insertProduct)
-      .where(eq(products.id, id))
-      .returning();
-    return product || undefined;
+      .where(eq(products.id, id));
+
+    return await this.getProduct(id);
   }
 
   async deleteProduct(id: string): Promise<boolean> {
-    const result = await db.delete(products).where(eq(products.id, id));
-    return result.rowCount !== null && result.rowCount > 0;
+    const product = await this.getProduct(id);
+    if (!product) return false;
+
+    await db.delete(products).where(eq(products.id, id));
+    return true;
   }
 
   // Admins
@@ -66,11 +70,11 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createAdmin(insertAdmin: InsertAdmin): Promise<Admin> {
-    const [admin] = await db
-      .insert(admins)
-      .values(insertAdmin)
-      .returning();
-    return admin;
+    const adminData = { id: crypto.randomUUID(), ...insertAdmin };
+
+    await db.insert(admins).values(adminData);
+
+    return (await this.getAdmin(adminData.id))!;
   }
 
   // Configuration
@@ -85,20 +89,22 @@ export class DatabaseStorage implements IStorage {
 
   async setConfiguration(key: string, value: string): Promise<Configuration> {
     const existing = await this.getConfigurationByKey(key);
-    
+
     if (existing) {
-      const [config] = await db
+      await db
         .update(configuration)
         .set({ value })
-        .where(eq(configuration.key, key))
-        .returning();
-      return config;
+        .where(eq(configuration.key, key));
+
+      return (await this.getConfigurationByKey(key))!;
     } else {
-      const [config] = await db
+      const configData = { id: crypto.randomUUID(), key, value };
+
+      await db
         .insert(configuration)
-        .values({ key, value })
-        .returning();
-      return config;
+        .values(configData);
+
+      return configData;
     }
   }
 }
