@@ -29,12 +29,13 @@ export default function AdminLogin() {
       setIsLoading(true);
       setError("");
 
-      const result = await apiRequest("POST", "/api/admin/login", data);
+      const response = await apiRequest("POST", "/api/admin/login", data);
+      const payload = await response.json();
 
-      if (result.ok) {
+      if (payload?.ok) {
         navigate("/admin/dashboard");
       } else {
-        setError(result.message || "Credenciales incorrectas");
+        setError(payload?.message || "Credenciales incorrectas");
       }
     } catch (err) {
       setError("Error al iniciar sesión. Intenta nuevamente.");

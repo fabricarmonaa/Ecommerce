@@ -1,19 +1,19 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, integer, decimal, boolean } from "drizzle-orm/pg-core";
+import { boolean, decimal, int, json, mysqlTable, text, varchar } from "drizzle-orm/mysql-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 // Products table
-export const products = pgTable("products", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+export const products = mysqlTable("products", {
+  id: varchar("id", { length: 36 }).primaryKey().default(sql`(UUID())`),
   name: text("name").notNull(),
   description: text("description").notNull(),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
-  images: text("images").array().notNull().default(sql`ARRAY[]::text[]`),
-  sizes: text("sizes").array().notNull().default(sql`ARRAY[]::text[]`),
-  colors: text("colors").array().notNull().default(sql`ARRAY[]::text[]`),
+  images: json("images").$type<string[]>().notNull().default(sql`(json_array())`),
+  sizes: json("sizes").$type<string[]>().notNull().default(sql`(json_array())`),
+  colors: json("colors").$type<string[]>().notNull().default(sql`(json_array())`),
   category: text("category").notNull(),
-  stock: integer("stock").notNull().default(0),
+  stock: int("stock").notNull().default(0),
   featured: boolean("featured").notNull().default(false),
 });
 
@@ -31,9 +31,9 @@ export type Product = typeof products.$inferSelect;
 export type InsertProduct = z.infer<typeof insertProductSchema>;
 
 // Admins table (no users table - only admins can log in)
-export const admins = pgTable("admins", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  username: text("username").notNull().unique(),
+export const admins = mysqlTable("admins", {
+  id: varchar("id", { length: 36 }).primaryKey().default(sql`(UUID())`),
+  username: varchar("username", { length: 191 }).notNull().unique(),
   password: text("password").notNull(),
   role: text("role").notNull().default("ADMIN"),
 });
@@ -56,9 +56,9 @@ export type InsertAdmin = z.infer<typeof insertAdminSchema>;
 export type LoginAdmin = z.infer<typeof loginAdminSchema>;
 
 // Configuration table (WhatsApp number and other settings)
-export const configuration = pgTable("configuration", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  key: text("key").notNull().unique(),
+export const configuration = mysqlTable("configuration", {
+  id: varchar("id", { length: 36 }).primaryKey().default(sql`(UUID())`),
+  key: varchar("key", { length: 191 }).notNull().unique(),
   value: text("value").notNull(),
 });
 
